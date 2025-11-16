@@ -130,9 +130,9 @@
                     🎉 每日一夸
                 </button>
                 
-                <!-- 按钮 4 -->
-                <button id="btn-4" class="jello-button text-white py-4 px-6 rounded-2xl text-lg font-semibold bg-gradient-to-r from-amber-500 to-orange-500">
-                    💖 我们的回忆
+                <!-- 按钮 4 (V11: 自动加载) -->
+                <button id="btn-4" class="jello-button text-white py-4 px-6 rounded-2xl text-lg font-semibold bg-gradient-to-r from-amber-500 to-orange-500 opacity-50 cursor-not-allowed" disabled>
+                    💖 正在加载回忆...
                 </button>
                 
             </div>
@@ -200,6 +200,12 @@
         const btn3 = document.getElementById('btn-3');
         const btn4 = document.getElementById('btn-4');
 
+        // (!!) !! V11 最终版 !! (!!)
+        // (!!) 我已根据您的信息帮您填好了，您无需修改此部分 (!!)
+        const GITHUB_USERNAME = 'haiyangw101661-oss';
+        const GITHUB_REPO_NAME = 'why';
+        // (!!) !!【【【 ----------------------- 】】】 (!!)
+
         // --- 2. 语录和照片数据 ---
         // (!!) !!请在这里修改为您想说的话!! (!!)
         const quotes = {
@@ -238,22 +244,9 @@
             ]
         };
         
-        // (!!) !! V10 最终版 !! (!!)
-        // (!!) 我已根据您的 GitHub 仓库为您填好了正确的“直链” (!!)
-        // (!!) 您无需再修改此部分 (!!)
-        const photoLinks = [
-            'https://raw.githubusercontent.com/haiyangw101661-oss/why/main/unnamed.jpg',
-            'https://raw.githubusercontent.com/haiyangw101661-oss/why/main/2.jpg',
-            'https://raw.githubusercontent.com/haiyangw101661-oss/why/main/3.jpg',
-            'https://raw.githubusercontent.com/haiyangw101661-oss/why/main/4.jpg',
-            'https://raw.githubusercontent.com/haiyangw101661-oss/why/main/5.jpg',
-            'https://raw.githubusercontent.com/haiyangw101661-oss/why/main/6.jpg',
-            'https://raw.githubusercontent.com/haiyangw101661-oss/why/main/7.jpg',
-            'https://raw.githubusercontent.com/haiyangw101661-oss/why/main/8.jpg',
-            'https://raw.githubusercontent.com/haiyangw101661-oss/why/main/9.jpg',
-            'https://raw.githubusercontent.com/haiyangw101661-oss/why/main/10.jpg'
-        ];
-        
+        // V11: 照片链接将从GitHub动态加载
+        let photoLinks = []; 
+                
         // V7: 粒子类型数组
         const particleTypes = ['💖', '✨', '🌸', '🌟'];
 
@@ -283,9 +276,9 @@
         // --- 5. 模态框函数 (图片) ---
         
         function showPhotoModal() {
-            // V10: 检查 photoLinks 是否为空 (以防万一)
             if (photoLinks.length === 0) {
-                showTextModal('💔', '照片链接配置似乎有问题！');
+                // 如果没有照片, 显示一条提示信息
+                showTextModal('💔', '照片还在路上，请稍后再试！');
                 return;
             }
             const randomPhoto = getRandomItem(photoLinks);
@@ -299,7 +292,50 @@
             photoModal.classList.remove('modal-visible');
         }
 
-        // --- 6. 绑定事件 ---
+        // --- 6. V11: 从 GitHub 加载照片 ---
+        async function fetchPhotosFromGitHub() {
+            // (V11: 移除了占位符检查, 因为我已经填好了)
+            const apiUrl = `https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO_NAME}/contents/`;
+            const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
+
+            try {
+                // 添加一个随机查询参数来防止API缓存
+                const response = await fetch(apiUrl + '?t=' + new Date().getTime());
+                
+                if (!response.ok) {
+                    throw new Error(`GitHub API 错误: ${response.statusText}`);
+                }
+                
+                const files = await response.json();
+                
+                if (Array.isArray(files)) {
+                    files.forEach(file => {
+                        // 确保我们只获取根目录下的文件
+                        if (file.type === 'file' && imageExtensions.some(ext => file.name.toLowerCase().endsWith(ext))) {
+                            // 使用 file.download_url, 这是最稳定的 "直链"
+                            photoLinks.push(file.download_url);
+                        }
+                    });
+                }
+
+                if (photoLinks.length === 0) {
+                    throw new Error('在仓库中没有找到图片文件。');
+                }
+
+                // 加载成功
+                btn4.disabled = false;
+                btn4.textContent = '💖 我们的回忆';
+                btn4.classList.remove('opacity-50', 'cursor-not-allowed');
+
+            } catch (error) {
+                console.error('加载 GitHub 照片失败:', error);
+                btn4.textContent = '💔 照片加载失败';
+                btn4.classList.add('opacity-70');
+                btn4.disabled = true; 
+            }
+        }
+
+        // --- 7. 绑定事件 ---
         
         btn1.addEventListener('click', () => {
             const quote = getRandomItem(quotes.btn1);
@@ -316,7 +352,7 @@
             showTextModal('🎉', quote);
         });
         
-        btn4.addEventListener('click', showPhotoModal);
+        btn4.addEventListener('click', showPhotoModal); 
         
         // 关闭语录模态框
         textModalClose.addEventListener('click', hideTextModal);
@@ -326,7 +362,7 @@
         photoModalClose.addEventListener('click', hidePhotoModal);
         photoModalOverlay.addEventListener('click', hidePhotoModal);
 
-        // --- 7. 多彩粒子雨效果 ---
+        // --- 8. 多彩粒子雨效果 ---
         function createParticle() {
             const particle = document.createElement('div');
             particle.classList.add('particle');
@@ -342,12 +378,18 @@
             });
         }
         
-        // 立即创建一些粒子, 避免启动时空白
-        for (let i = 0; i < 15; i++) {
-            createParticle();
-        }
-        // 保持持续创建
-        setInterval(createParticle, 300);
+        // --- 9. V11: 页面加载时启动照片获取 & 粒子预热 ---
+        window.onload = () => {
+            // 启动照片获取
+            fetchPhotosFromGitHub();
+            
+            // 立即创建一些粒子, 避免启动时空白
+            for (let i = 0; i < 15; i++) {
+                createParticle();
+            }
+            // 保持持续创建
+            setInterval(createParticle, 300);
+        };
 
     </script>
 </body>
