@@ -1,463 +1,624 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>给宝贝的App</title>
-    
-    <!-- 引入Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- 引入 Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
-    
-    <style>
-        /* 自定义字体 */
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        .font-display {
-            font-family: 'Dancing Script', cursive;
-        }
-        
-        /* 动态渐变背景 */
-        body {
-            background: linear-gradient(-45deg, #fbc2eb, #a6c1ee, #fddb92, #fbc2eb);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
-        }
-        
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        
-        /* 模态框弹出动画 */
-        .modal {
-            transition: opacity 0.3s ease, transform 0.3s ease;
-        }
-        .modal-hidden {
-            opacity: 0;
-            transform: scale(0.9);
-            pointer-events: none;
-        }
-        .modal-visible {
-            opacity: 1;
-            transform: scale(1);
-        }
-        
-        /* 按钮的果冻/Q弹效果 */
-        .jello-button {
-            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-            box-shadow: 0 4px 15px 0 rgba(100, 100, 100, 0.2);
-        }
-        .jello-button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 6px 20px 0 rgba(100, 100, 100, 0.3);
-        }
-        .jello-button:active {
-            transform: scale(0.95);
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>给宝贝的小App</title>
 
-        /* 粒子动画 */
-        .particle {
-            position: absolute;
-            font-size: 1.5rem;
-            animation: particle-fall 5s linear; 
-            top: -10%;
-        }
-        
-        @keyframes particle-fall {
-            0% {
-                top: -10%;
-                opacity: 1;
-            }
-            100% {
-                top: 110%;
-                opacity: 0.5;
-            }
-        }
-        
-        /* V1G-ZH: 轮播按钮样式 */
-        .carousel-btn {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            z-index: 60; /* 确保在内容之上 */
-            background-color: rgba(0, 0, 0, 0.3);
-            color: white;
-            border-radius: 9999px; /*
-            padding: 0.75rem; /* 12px */
-            transition: all 0.2s ease;
-            cursor: pointer;
-        }
-        .carousel-btn:hover {
-            background-color: rgba(0, 0, 0, 0.6);
-            transform: translateY(-50%) scale(1.1);
-        }
-        
-        /* V1G-ZH: 照片内容样式 */
-        #gallery-content-container img {
-            max-width: 90vw;
-            max-height: 90vh; 
-            object-fit: contain; 
-            border-radius: 1.5rem;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
 
-        /* V1G-ZH: 文本内容样式 */
-        .text-content-wrapper {
-            position: relative;
-            width: 100%;
-            max-width: 24rem; /* 384px, sm */
-            padding: 1.5rem; /* 24px, p-6 */
-            background-color: white;
-            border-radius: 1.5rem; /* rounded-3xl */
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); /* shadow-xl */
-            text-align: center;
-        }
-        
-    </style>
+  <!-- 字体 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(-45deg, #fbc2eb, #a6c1ee, #fddb92, #fbc2eb);
+      background-size: 400% 400%;
+      animation: gradientBG 30s ease infinite;
+    }
+
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .particle {
+      position: absolute;
+      font-size: 1.4rem;
+      animation: particle-fall linear forwards;
+      top: -10%;
+      pointer-events: none;
+    }
+
+    @keyframes particle-fall {
+      0% {
+        top: -10%;
+        opacity: 1;
+        transform: translateX(0) rotate(0deg);
+      }
+      100% {
+        top: 110%;
+        opacity: 0;
+        transform: translateX(20px) rotate(60deg);
+      }
+    }
+
+    .carousel-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 60;
+      background-color: rgba(0, 0, 0, 0.3);
+      color: white;
+      border-radius: 9999px;
+      padding: 0.75rem;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    .carousel-btn:hover {
+      background-color: rgba(0, 0, 0, 0.6);
+      transform: translateY(-50%) scale(1.08);
+    }
+
+    #gallery-image {
+      max-width: 90vw;
+      max-height: 90vh;
+      object-fit: contain;
+      border-radius: 1.5rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .jello-button {
+      transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+      box-shadow: 0 4px 15px 0 rgba(100, 100, 100, 0.2);
+    }
+    .jello-button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 20px 0 rgba(100, 100, 100, 0.3);
+    }
+    .jello-button:active {
+      transform: scale(0.95);
+    }
+
+    .font-display {
+      font-family: 'Dancing Script', cursive;
+    }
+  </style>
 </head>
-<body class="overflow-hidden">
-    
-    <!-- 粒子容器 -->
-    <div id="particle-container" class="absolute inset-0 z-0 overflow-hidden" aria-hidden="true">
-        <!-- JS 会在这里动态添加粒子 -->
-    </div>
+<body class="min-h-screen overflow-y-auto">
 
-    <!-- 主内容 -->
-    <div class="relative flex flex-col items-center justify-center min-h-screen p-6 z-10">
-        
-        <!-- 主卡片 -->
-        <div class="w-full max-w-md p-8 bg-white/80 backdrop-blur-md rounded-3xl shadow-2xl shadow-pink-200/50 text-center">
-            
-            <h1 class="font-display text-5xl font-bold text-pink-600">
-                给我的宝贝
-            </h1>
-            
-            <p class="mt-4 text-lg text-gray-700">
-                生活中的一些小美好...
-            </p>
+  <!-- 粒子容器 -->
+  <div id="particle-container" class="absolute inset-0 -z-10 overflow-hidden"></div>
 
-            <!-- 按钮网格 -->
-            <div class="grid grid-cols-2 gap-6 mt-10">
-                
-                <!-- 按钮 1 -->
-                <button id="btn-1" class="jello-button text-white py-4 px-6 rounded-2xl text-lg font-semibold bg-gradient-to-r from-pink-500 to-rose-500">
-                    💌 爱的便签
-                </button>
-                
-                <!-- 按钮 2 -->
-                <button id="btn-2" class="jello-button text-white py-4 px-6 rounded-2xl text-lg font-semibold bg-gradient-to-r from-purple-500 to-indigo-500">
-                    ✨ 需要鼓励时
-                </button>
-                
-                <!-- 按钮 3 -->
-                <button id="btn-3" class="jello-button text-white py-4 px-6 rounded-2xl text-lg font-semibold bg-gradient-to-r from-teal-400 to-cyan-500">
-                    🎉 每日一夸
-                </button>
-                
-                <!-- 按钮 4 -->
-                <button id="btn-4" class="jello-button text-white py-4 px-6 rounded-2xl text-lg font-semibold bg-gradient-to-r from-amber-500 to-orange-500 opacity-50 cursor-not-allowed" disabled>
-                    💖 正在加载回忆...
-                </button>
-                
+  <!-- 主内容 -->
+  <div class="relative min-h-screen flex flex-col items-center px-4 py-8">
+    <div class="w-full max-w-xl space-y-4">
+
+      <!-- 主卡片 -->
+      <div class="w-full p-6 bg-white/80 backdrop-blur-md rounded-3xl shadow-2xl shadow-pink-200/50">
+        <h1 class="font-display text-4xl md:text-5xl font-bold text-pink-600 text-center">
+          给我的宝贝
+        </h1>
+        <p class="mt-2 text-center text-sm text-gray-600">
+          生活中的一些小美好，都偷偷藏在这里。
+        </p>
+
+        <!-- 今日小情话 -->
+        <section class="mt-4 p-4 rounded-2xl bg-pink-50/90">
+          <p class="text-xs text-gray-400 mb-1">今日小情话</p>
+          <p id="today-quote-text" class="text-base md:text-lg font-semibold text-gray-800">
+            加载中...
+          </p>
+        </section>
+
+        <!-- 心情面板 -->
+        <section class="mt-4 p-4 rounded-2xl bg-white/90 shadow-inner">
+          <div class="flex items-center justify-between mb-3">
+            <h2 class="text-sm font-semibold text-gray-800">现在的心情是？</h2>
+            <span class="text-xs text-gray-400">点一点,我来应援</span>
+          </div>
+          <div class="grid grid-cols-4 gap-2 text-xs md:text-sm">
+            <button data-mood="tired" class="mood-btn py-2 rounded-xl bg-pink-50 jello-button">累累 🥱</button>
+            <button data-mood="sad" class="mood-btn py-2 rounded-xl bg-indigo-50 jello-button">难过 😢</button>
+            <button data-mood="happy" class="mood-btn py-2 rounded-xl bg-amber-50 jello-button">开心 😆</button>
+            <button data-mood="anxious" class="mood-btn py-2 rounded-xl bg-teal-50 jello-button">焦虑 😖</button>
+          </div>
+          <!-- V15: 修复空白问题, 减小最小高度 -->
+          <p id="mood-reply" class="mt-3 text-sm text-gray-700 min-h-[1.5rem]">点一个上面的心情按钮试试看？</p>
+        </section>
+
+        <!-- V14: 四大功能按钮 (2x2 布局) -->
+        <section class="mt-4 grid grid-cols-2 gap-3">
+          <button id="nav-love" class="jello-button w-full py-3 md:py-4 px-3 rounded-2xl bg-gradient-to-r from-pink-500 to-rose-500 text-white text-sm md:text-base font-semibold flex items-center justify-center gap-2">
+            <span>💌</span><span>爱的便签</span>
+          </button>
+          <button id="nav-enc" class="jello-button w-full py-3 md:py-4 px-3 rounded-2xl bg-gradient-to-r from-purple-500 to-indigo-500 text-white text-sm md:text-base font-semibold flex items-center justify-center gap-2">
+            <span>✨</span><span>需要鼓励</span>
+          </button>
+          <button id="nav-praise" class="jello-button w-full py-3 md:py-4 px-3 rounded-2xl bg-gradient-to-r from-teal-400 to-cyan-500 text-white text-sm md:text-base font-semibold flex items-center justify-center gap-2">
+            <span>🎉</span><span>每日一夸</span>
+          </button>
+          
+          <!-- V14: 恢复自动加载功能 -->
+          <button id="memory-open" class="jello-button w-full py-3 md:py-4 px-3 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 text-white text-sm md:text-base font-semibold flex items-center justify-center gap-2 opacity-50 cursor-not-allowed" disabled>
+            <span>💖</span><span>正在加载...</span>
+          </button>
+        </section>
+
+        <!-- 今日扭一扭 -->
+        <section class="mt-4 p-4 rounded-2xl bg-white/90 shadow-inner">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-xs text-gray-400">今日扭一扭</p>
+              <p class="text-sm md:text-base font-semibold text-gray-800">戳一下拆盲盒</p>
             </div>
-            
-            <p class="mt-8 text-xs text-gray-400">
-                Made with ❤️ by why
-            </p>
-        </div>
-        
+            <button id="gacha-btn" class="jello-button px-3 py-2 rounded-xl bg-gradient-to-r from-pink-500 to-purple-500 text-white text-xs font-semibold">
+              扭一扭
+            </button>
+          </div>
+          <!-- V15: 修复空白问题, 减小最小高度 -->
+          <p id="gacha-text" class="mt-2 text-sm text-gray-700 min-h-[1.5rem]"></p>
+          <p id="gacha-count" class="mt-1 text-xs text-gray-400 cursor-pointer"></p>
+        </section>
+      </div>
+
+      <p class="mt-4 text-center text-[11px] text-gray-400">
+        Made with ❤️ by why
+      </p>
     </div>
+  </div>
 
-    <!-- V1G-ZH: 统一的画廊模态框 -->
-    <div id="gallery-modal" class="modal modal-hidden fixed inset-0 z-50 flex items-center justify-center p-4">
-        <!-- 遮罩 -->
-        <div id="gallery-overlay" class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
-        
-        <!-- 关闭按钮 (右上角) -->
-        <button id="gallery-close" class="absolute top-4 right-4 z-50 text-white bg-black/30 hover:bg-black/50 rounded-full p-2 transition-colors">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-        </button>
-        
-        <!-- 上一个按钮 (左侧) -->
-        <button id="gallery-prev" class="carousel-btn left-4">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-            </svg>
-        </button>
-        
-        <!-- 下一个按钮 (右侧) -->
-        <button id="gallery-next" class="carousel-btn right-4">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-            </svg>
-        </button>
-
-        <!-- 内容容器 (文字或图片) -->
-        <div id="gallery-content-container" class="relative flex justify-center items-center w-full h-full">
-            <!-- JS 将在此处注入内容 -->
-        </div>
+  <!-- 文本弹窗：爱的便签 / 鼓励 / 夸夸 / 提示 -->
+  <div id="text-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 px-6 backdrop-blur-sm">
+    <div class="bg-white rounded-3xl p-6 max-w-sm w-full text-center shadow-xl">
+      <div id="text-modal-icon" class="text-4xl mb-3">💌</div>
+      <p id="text-modal-content" class="text-lg text-gray-800"></p>
+      <button id="text-modal-close" class="mt-4 px-4 py-2 rounded-xl bg-pink-500 text-white text-sm font-semibold">
+        好 ~
+      </button>
     </div>
+  </div>
+
+  <!-- 照片画廊弹窗 -->
+  <div id="gallery-modal" class="fixed inset-0 z-40 hidden items-center justify-center p-4">
+    <div id="gallery-overlay" class="absolute inset-0 bg-black/55 backdrop-blur-sm"></div>
+
+    <button id="gallery-close" class="absolute top-4 right-4 z-50 text-white bg-black/30 hover:bg-black/60 rounded-full p-2 transition">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+
+    <button id="gallery-prev" class="carousel-btn left-4">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+      </svg>
+    </button>
+
+    <button id="gallery-next" class="carousel-btn right-4">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+      </svg>
+    </button>
+
+    <div class="relative flex justify-center items-center w-full h-full">
+      <img id="gallery-image" src="" alt="我们的回忆" />
+      <!-- V14: 移除了页码指示器 -->
+      <div id="gallery-indicator" class="absolute bottom-6 left-1/2 -translate-x-1/2 text-xs text-white/80 hidden"></div>
+    </div>
+  </div>
+
+  <script>
+    // V14: 恢复 GitHub API 自动加载
+    const GITHUB_USERNAME = 'haiyangw101661-oss';
+    const GITHUB_REPO_NAME = 'why';
+
+    /* ---------- 文案数据 ---------- */
+    
+    // 每日小情话
+    const dailyQuotes = [
+      "这只是一个小提醒：我今天也很喜欢你。",
+      "如果今天不太顺利，就把不顺利分一点给我。",
+      "无论你在哪个城市，我都在这边替你说晚安。",
+      "你就像阳光一样，照亮了我的世界。",
+      "和你在一起，每一天都是情人节。"
+    ];
+
+    // 心情回复
+    const moodReplies = {
+      tired: [
+        "累累就先不用逞强啦，喝水、伸伸懒腰，剩下的交给我和时间。",
+        "今天如果只想当一条咸鱼也没关系，我负责喜欢你就好。",
+        "工作可以先放一放，但照顾好自己这件事我们不能下班。",
+        "你已经很棒了，允许自己慢一点、懒一点、喘口气。",
+        "闭上眼睛想象一下我在你旁边给你盖被子，就是现在。",
+      ],
+      sad: [
+        "想哭就哭一会儿，我不会嫌你烦，只会更想抱抱你。",
+        "情绪有点低落不代表你不够好，只是今天风有点大而已。",
+        "难过的时候别急着坚强，可以先做一个需要被照顾的小朋友。",
+        "你可以暂时什么都不想解决，只要先保证自己平安入睡。",
+        "哪怕你一整天都在emo，我这边对你的喜欢也不会打折。",
+      ],
+      happy: [
+        "把这份开心打包一小份给我，剩下的都留给你自己。",
+        "我就知道，你这么可爱，宇宙总会多照顾你一点。",
+        "快记住现在这份快乐，以后难过的时候我拿出来还给你。",
+        "你一高兴，我就想在日历上画一个大大的爱心。",
+        "开心的时候请狠狠地夸自己几句，因为你真的很值得。",
+      ],
+      anxious: [
+        "别担心，天塌下来有我顶着！",
+        "相信自己，你比想象中更强大。",
+        "没关系，慢慢来，我会一直陪着你。",
+        "你做的每一个决定，我都支持。",
+        "深呼吸，然后想象我正在把你的焦虑都抱走。",
+      ]
+    };
+    
+    // 三大功能按钮的语录
+    const quotes = {
+        btn1: [
+            '这只是一个提醒：我每时每刻都在想你！',
+            '遇到你，是我这辈子最幸运的事。',
+            '你的笑容，是我一天的动力！',
+            '你就像阳光一样，照亮了我的世界。',
+            '有你在身边，再大的困难也不怕。',
+            '每一次呼吸，都为你心动。',
+            '你的出现，治愈了我所有的不开心。',
+            '想把世界上所有的温柔都给你。',
+            '和你在一起，每一天都是情人节。'
+        ],
+        btn2: [
+            '你已经超级棒了！累了就歇一歇，我永远是你最坚实的后盾。',
+            '别担心，天塌下来有我顶着！',
+            '相信自己，你比想象中更强大。',
+            '你做的每一个决定，我都支持。',
+            '累的时候，想想我，我是你的能量补给站。',
+            '没关系，慢慢来，我会一直陪着你。',
+            '你的努力，我都看在眼里，真的为你骄傲。',
+            '记得爱自己多一点，你值得世间所有的美好。',
+            '任何时候，我都会是第一个为你加油的人。'
+        ],
+        btn3: [
+            '今日份夸奖：你的眼睛里有星星！',
+            '怎么会有人连生气的样子都这么可爱！',
+            '你是我见过最有品味的人！',
+            '你的声音就像天籁，让我百听不厌。',
+            '你的发丝都透露着迷人的魅力。',
+            '穿什么都好看，简直是行走的画报。',
+            '你的善良和温柔，是这个世界最宝贵的财富。',
+            '聪明又可爱，怎么会有这么完美的人！',
+            '跟你在一起，我感觉自己也变得更好了。'
+        ]
+    };
+    
+    // 扭蛋机文案
+    const gachaReplies = [
+        "奖励你今天可以亲我一下 (隔空的也算)",
+        "解锁新成就：今天也是超可爱的一天！",
+        "恭喜抽中：一个大大的隔空拥抱！",
+        "你抽中了一张“偷懒券”，今天可以早点休息！",
+        "哇！是“好运爆棚卡”，今天一定会很顺利！",
+        "抽中“被爱卡”，说明我今天又多爱了你一点点。",
+        "隐藏款：被我发现你又在偷偷可爱了！"
+    ];
+    
+    /* ---------- 状态变量 ---------- */
+    // V14: 恢复自动加载
+    let photoLinks = []; 
+    let gachaCount = 0; // V16: 从 localStorage 加载
+    
+    // 轮播图状态 (只用于照片)
+    let galleryCurrentList = [];
+    let galleryCurrentIndex = 0;
+    
+    // 粒子类型数组
+    const particleTypes = ['💖', '✨', '🌸', '🌟'];
+
+    /* ---------- 获取元素 ---------- */
+    const particleContainer = document.getElementById('particle-container');
+    const todayQuoteText = document.getElementById('today-quote-text');
+    const moodReplyText = document.getElementById('mood-reply');
+    const moodButtons = document.querySelectorAll('.mood-btn');
+    
+    const gachaBtn = document.getElementById('gacha-btn');
+    const gachaText = document.getElementById('gacha-text');
+    const gachaCountText = document.getElementById('gacha-count');
+
+    const navLove = document.getElementById('nav-love');
+    const navEnc = document.getElementById('nav-enc');
+    const navPraise = document.getElementById('nav-praise');
+    const memoryOpen = document.getElementById('memory-open');
+
+    // 文本弹窗
+    const textModal = document.getElementById('text-modal');
+    const textModalIcon = document.getElementById('text-modal-icon');
+    const textModalContent = document.getElementById('text-modal-content');
+    const textModalClose = document.getElementById('text-modal-close');
+    
+    // 照片画廊弹窗
+    const galleryModal = document.getElementById('gallery-modal');
+    const galleryOverlay = document.getElementById('gallery-overlay');
+    const galleryClose = document.getElementById('gallery-close');
+    const galleryPrev = document.getElementById('gallery-prev');
+    const galleryNext = document.getElementById('gallery-next');
+    const galleryImage = document.getElementById('gallery-image');
+    const galleryIndicator = document.getElementById('gallery-indicator');
 
 
-    <script>
-        // --- 1. 获取元素 ---
-        const particleContainer = document.getElementById('particle-container');
-        
-        // V1G-ZH: 移除旧的 modal 元素
-        // const textModal = ...
-        // const photoModal = ...
-
-        // V1G-ZH: 获取新的 gallery-modal 元素
-        const galleryModal = document.getElementById('gallery-modal');
-        const galleryOverlay = document.getElementById('gallery-overlay');
-        const galleryClose = document.getElementById('gallery-close');
-        const galleryPrev = document.getElementById('gallery-prev');
-        const galleryNext = document.getElementById('gallery-next');
-        const galleryContentContainer = document.getElementById('gallery-content-container');
-
-        const btn1 = document.getElementById('btn-1');
-        const btn2 = document.getElementById('btn-2');
-        const btn3 = document.getElementById('btn-3');
-        const btn4 = document.getElementById('btn-4');
-
-        // V1G-ZH: 轮播状态变量
-        let currentList = [];
-        let currentIndex = 0;
-        let currentListType = 'text'; // 'text' 或 'photo'
-        let currentIcon = '💌'; // 用于文本
-
-        // (!!) !! V11 最终版 !! (!!)
-        // (!!) 我已根据您的信息帮您填好了，您无需修改此部分 (!!)
-        const GITHUB_USERNAME = 'haiyangw101661-oss';
-        const GITHUB_REPO_NAME = 'why';
-        // (!!) !!【【【 ----------------------- 】】】 (!!)
-
-        // --- 2. 语录和照片数据 ---
-        // (!!) !!请在这里修改为您想说的话!! (!!)
-        const quotes = {
-            btn1: [
-                '这只是一个提醒：我每时每刻都在想你！',
-                '遇到你，是我这辈子最幸运的事。',
-                '你的笑容，是我一天的动力！',
-                '你就像阳光一样，照亮了我的世界。',
-                '有你在身边，再大的困难也不怕。',
-                '每一次呼吸，都为你心动。',
-                '你的出现，治愈了我所有的不开心。',
-                '想把世界上所有的温柔都给你。',
-                '和你在一起，每一天都是情人节。'
-            ],
-            btn2: [
-                '你已经超级棒了！累了就歇一歇，我永远是你最坚实的后盾。',
-                '别担心，天塌下来有我顶着！',
-                '相信自己，你比想象中更强大。',
-                '你做的每一个决定，我都支持。',
-                '累的时候，想想我，我是你的能量补给站。',
-                '没关系，慢慢来，我会一直陪着你。',
-                '你的努力，我都看在眼里，真的为你骄傲。',
-                '记得爱自己多一点，你值得世间所有的美好。',
-                '任何时候，我都会是第一个为你加油的人。'
-            ],
-            btn3: [
-                '今日份夸奖：你的眼睛里有星星！',
-                '怎么会有人连生气的样子都这么可爱！',
-                '你是我见过最有品味的人！',
-                '你的声音就像天籁，让我百听不厌。',
-                '你的发丝都透露着迷人的魅力。',
-                '穿什么都好看，简直是行走的画报。',
-                '你的善良和温柔，是这个世界最宝贵的财富。',
-                '聪明又可爱，怎么会有这么完美的人！',
-                '跟你在一起，我感觉自己也变得更好了。'
-            ]
-        };
-        
-        // V11: 照片链接将从GitHub动态加载
-        let photoLinks = []; 
-                
-        // V7: 粒子类型数组
-        const particleTypes = ['💖', '✨', '🌸', '🌟'];
-
-        // --- 3. 辅助函数 ---
-        
-        // 从数组中随机获取一项 (V1G-ZH: 我们现在主要用它来洗牌)
-        function getRandomItem(arr) {
-            return arr[Math.floor(Math.random() * arr.length)];
+    /* ---------- 辅助函数 ---------- */
+    function getRandomItem(arr) {
+        return arr[Math.floor(Math.random() * arr.length)];
+    }
+    
+    function shuffleArray(array) {
+        let newArr = [...array];
+        for (let i = newArr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
         }
-        
-        // V1G-ZH: Fisher-Yates 数组洗牌算法
-        function shuffleArray(array) {
-            let newArr = [...array]; // 创建副本
-            for (let i = newArr.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+        return newArr;
+    }
+    
+    /* ---------- 弹窗功能 ---------- */
+
+    // 1. 文本弹窗 (用于语录、提示)
+    function showTextModal(icon, message) {
+        textModalIcon.textContent = icon;
+        textModalContent.textContent = message;
+        textModal.classList.remove('hidden');
+        textModal.classList.add('flex');
+    }
+    function hideTextModal() {
+        textModal.classList.add('hidden');
+        textModal.classList.remove('flex');
+    }
+
+    // 2. 照片画廊 (用于“我们的回忆”)
+    function displayGalleryItem() {
+        if (galleryCurrentList.length === 0) return;
+        galleryImage.src = galleryCurrentList[galleryCurrentIndex];
+        // V14: 移除了页码指示器
+        // galleryIndicator.textContent = `${galleryCurrentIndex + 1} / ${galleryCurrentList.length}`;
+    }
+
+    function showGalleryModal() {
+        if (photoLinks.length === 0) {
+             showTextModal('💔', '照片还在路上，请稍后再试！');
+             return;
+        }
+        galleryCurrentList = shuffleArray(photoLinks); // 每次打开都洗牌
+        galleryCurrentIndex = 0;
+        displayGalleryItem();
+        galleryModal.classList.remove('hidden');
+        galleryModal.classList.add('flex');
+    }
+    
+    function hideGalleryModal() {
+        galleryModal.classList.add('hidden');
+        galleryModal.classList.remove('flex');
+    }
+    
+    function showNextPhoto() {
+        galleryCurrentIndex++;
+        if (galleryCurrentIndex >= galleryCurrentList.length) {
+            galleryCurrentIndex = 0; // 循环
+        }
+        displayGalleryItem();
+    }
+    
+    function showPrevPhoto() {
+        galleryCurrentIndex--;
+        if (galleryCurrentIndex < 0) {
+            galleryCurrentIndex = galleryCurrentList.length - 1; // 循环
+        }
+        displayGalleryItem();
+    }
+    
+    // V14: 恢复 fetchPhotosFromGitHub() 函数
+    async function fetchPhotosFromGitHub() {
+        const apiUrl = `https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO_NAME}/contents/`;
+        const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
+
+        try {
+            // V14: 添加一个随机查询参数来防止API缓存
+            const response = await fetch(apiUrl + '?t=' + new Date().getTime()); 
+            if (!response.ok) {
+                // 如果API失败, 尝试使用 V13 的手动列表作为备用
+                console.warn('GitHub API 失败, 正在尝试备用链接...');
+                throw new Error(`GitHub API 错误: ${response.statusText}`);
             }
-            return newArr;
-        }
-        
-        // --- 4. V1G-ZH: 统一的画廊模态框函数 ---
-
-        // 根据索引显示当前项目
-        function displayCurrentItem() {
-            const item = currentList[currentIndex];
             
-            // 清空旧内容
-            galleryContentContainer.innerHTML = ''; 
-
-            if (currentListType === 'text') {
-                // 是语录
-                galleryContentContainer.innerHTML = `
-                    <div class="text-content-wrapper">
-                        <div class="text-6xl mb-4">${currentIcon}</div>
-                        <p class="text-xl text-gray-800 font-semibold">${item}</p>
-                    </div>
-                `;
-            } else {
-                // 是照片
-                galleryContentContainer.innerHTML = `
-                    <img src="${item}" alt="我们的回忆" class="max-w-full max-h-[90vh] object-contain rounded-3xl shadow-xl">
-                `;
-            }
-        }
-
-        // 打开画廊
-        function showGalleryModal(list, type, icon = '') {
-            if (list.length === 0) return; // 安全检查
-
-            currentList = shuffleArray(list); // 每次打开都洗牌
-            currentIndex = 0; // 从第一个开始
-            currentListType = type;
-            if (type === 'text') {
-                currentIcon = icon;
-            }
+            const files = await response.json();
             
-            displayCurrentItem();
-            galleryModal.classList.remove('modal-hidden');
-            galleryModal.classList.add('modal-visible');
-        }
-
-        // 关闭画廊
-        function hideGalleryModal() {
-            galleryModal.classList.add('modal-hidden');
-            galleryModal.classList.remove('modal-visible');
-            galleryContentContainer.innerHTML = ''; // 关闭时清空内容
-        }
-        
-        // V1G-ZH: 导航函数
-        function showNextItem() {
-            currentIndex++;
-            if (currentIndex >= currentList.length) {
-                currentIndex = 0; // 循环到开头
+            if (Array.isArray(files)) {
+                files.forEach(file => {
+                    if (file.type === 'file' && imageExtensions.some(ext => file.name.toLowerCase().endsWith(ext))) {
+                        photoLinks.push(file.download_url); // 使用 'download_url'
+                    }
+                });
             }
-            displayCurrentItem();
-        }
-        
-        function showPrevItem() {
-            currentIndex--;
-            if (currentIndex < 0) {
-                currentIndex = currentList.length - 1; // 循环到末尾
-            }
-            displayCurrentItem();
-        }
-
-        // --- 5. V1G-ZH: 从 GitHub 加载照片 (与V11相同) ---
-        async function fetchPhotosFromGitHub() {
-            const apiUrl = `https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO_NAME}/contents/`;
-            const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
-
-            try {
-                const response = await fetch(apiUrl + '?t=' + new Date().getTime());
-                if (!response.ok) throw new Error(`GitHub API 错误: ${response.statusText}`);
-                
-                const files = await response.json();
-                
-                if (Array.isArray(files)) {
-                    files.forEach(file => {
-                        if (file.type === 'file' && imageExtensions.some(ext => file.name.toLowerCase().endsWith(ext))) {
-                            photoLinks.push(file.download_url);
-                        }
-                    });
-                }
-                if (photoLinks.length === 0) throw new Error('在仓库中没有找到图片文件。');
-
-                // 加载成功
-                btn4.disabled = false;
-                btn4.textContent = '💖 我们的回忆';
-                btn4.classList.remove('opacity-50', 'cursor-not-allowed');
-
-            } catch (error) {
-                console.error('加载 GitHub 照片失败:', error);
-                btn4.textContent = '💔 照片加载失败';
-                btn4.classList.add('opacity-70');
-                btn4.disabled = true; 
-            }
-        }
-
-        // --- 6. V1G-ZH: 绑定事件 (已更新) ---
-        
-        btn1.addEventListener('click', () => {
-            showGalleryModal(quotes.btn1, 'text', '💌');
-        });
-        
-        btn2.addEventListener('click', () => {
-            showGalleryModal(quotes.btn2, 'text', '✨');
-        });
-        
-        btn3.addEventListener('click', () => {
-            showGalleryModal(quotes.btn3, 'text', '🎉');
-        });
-        
-        btn4.addEventListener('click', () => {
             if (photoLinks.length === 0) {
-                 // 如果照片加载失败, 也用画廊弹窗显示错误信息
-                 showGalleryModal(['照片还在路上，请稍后再试！'], 'text', '💔');
-                 return;
+                 // 如果API成功了但没找到照片, 也使用备用列表
+                console.warn('GitHub API 未找到照片, 正在尝试备用链接...');
+                throw new Error('在仓库中没有找到图片文件。');
             }
-            showGalleryModal(photoLinks, 'photo');
-        });
-        
-        // V1G-ZH: 绑定新画廊按钮的事件
-        galleryClose.addEventListener('click', hideGalleryModal);
-        galleryOverlay.addEventListener('click', hideGalleryModal);
-        galleryNext.addEventListener('click', showNextItem);
-        galleryPrev.addEventListener('click', showPrevItem);
 
-        // --- 7. 多彩粒子雨效果 (与V11相同) ---
-        function createParticle() {
-            const particle = document.createElement('div');
-            particle.classList.add('particle');
-            particle.textContent = getRandomItem(particleTypes); 
-            particle.style.left = Math.random() * 100 + 'vw';
-            particle.style.animationDuration = (Math.random() * 2 + 3) + 's'; // 3-5秒
+            // 加载成功
+            memoryOpen.disabled = false;
+            memoryOpen.innerHTML = '<span>💖</span><span>我们的回忆</span>';
+            memoryOpen.classList.remove('opacity-50', 'cursor-not-allowed');
+
+        } catch (error) {
+            console.error('加载 GitHub 照片失败:', error);
+            // V15: 自动加载失败时的备用方案 (已修复文件名)
+            // 使用 V13 的手动链接列表
+            photoLinks = [
+                'https://raw.githubusercontent.com/haiyangw101661-oss/why/main/未命名.jpg', // V15: 修复了文件名
+                'https://raw.githubusercontent.com/haiyangw101661-oss/why/main/2.jpg',
+                'https://raw.githubusercontent.com/haiyangw101661-oss/why/main/3.jpg',
+                'https://raw.githubusercontent.com/haiyangw101661-oss/why/main/4.jpg',
+                'https://raw.githubusercontent.com/haiyangw101661-oss/why/main/5.jpg',
+                'https://raw.githubusercontent.com/haiyangw101661-oss/why/main/6.jpg',
+                'https://raw.githubusercontent.com/haiyangw101661-oss/why/main/7.jpg',
+                'https://raw.githubusercontent.com/haiyangw101661-oss/why/main/8.jpg',
+                'https://raw.githubusercontent.com/haiyangw101661-oss/why/main/9.jpg',
+                'https://raw.githubusercontent.com/haiyangw101661-oss/why/main/10.jpg'
+            ];
             
-            particleContainer.appendChild(particle);
-            
-            // 动画结束后移除元素
-            particle.addEventListener('animationend', () => {
-                particle.remove();
-            });
+            // 检查备用列表是否也为空
+            if (photoLinks.length > 0) {
+                // 备用方案加载成功
+                memoryOpen.disabled = false;
+                memoryOpen.innerHTML = '<span>💖</span><span>我们的回忆</span>';
+                memoryOpen.classList.remove('opacity-50', 'cursor-not-allowed');
+            } else {
+                // 彻底失败
+                memoryOpen.innerHTML = '<span>💔</span><span>照片加载失败</span>';
+                memoryOpen.classList.add('opacity-70');
+                memoryOpen.disabled = true; 
+            }
         }
-        
-        // --- 8. V1G-ZH: 页面加载时启动 (与V11相同) ---
-        window.onload = () => {
-            // 启动照片获取
-            fetchPhotosFromGitHub();
-            
-            // 立即创建一些粒子, 避免启动时空白
-            for (let i = 0; i < 15; i++) {
-                createParticle();
-            }
-            // 保持持续创建
-            setInterval(createParticle, 300);
-        };
+    }
 
-    </script>
+    /* ---------- V7: 粒子雨 ---------- */
+    function createParticle() {
+        const particle = document.createElement('div');
+        particle.classList.add('particle');
+        particle.textContent = getRandomItem(particleTypes); 
+        particle.style.left = Math.random() * 100 + 'vw';
+        particle.style.animationDuration = (Math.random() * 5 + 5) + 's'; // 5-10秒
+        particle.style.animationDelay = (Math.random() * -5) + 's'; // 立即开始
+        
+        particleContainer.appendChild(particle);
+        
+        // 动画结束后移除元素
+        particle.addEventListener('animationend', () => {
+            particle.remove();
+        });
+    }
+
+    /* ---------- V15: 扭蛋机重置功能 ---------- */
+    function resetGacha() {
+        if (gachaCount > 0) { // 只有点击过才提示重置
+            gachaCount = 0;
+            gachaText.textContent = "次数已重置！ ✨";
+            gachaCountText.textContent = "今日已扭 0/3 次";
+            
+            // V16: 将重置保存到 localStorage
+            const today = new Date().toLocaleDateString();
+            localStorage.setItem('gachaCount', 0);
+            localStorage.setItem('gachaDate', today);
+        }
+    }
+
+    /* ---------- 页面加载和事件绑定 ---------- */
+    
+    // 页面加载时运行
+    window.onload = () => {
+        // V14: 启动照片获取
+        fetchPhotosFromGitHub();
+        
+        // V16: 获取今天的日期
+        const today = new Date().toLocaleDateString(); // e.g., "11/16/2025"
+        
+        // V16: 每日情话逻辑
+        const savedQuoteDate = localStorage.getItem('quoteDate');
+        let quoteToDisplay = '';
+        if (savedQuoteDate === today) {
+            // 今天已经访问过了, 加载保存的情话
+            quoteToDisplay = localStorage.getItem('dailyQuote') || getRandomItem(dailyQuotes);
+        } else {
+            // 新的一天, 抽一句新的
+            quoteToDisplay = getRandomItem(dailyQuotes);
+            localStorage.setItem('dailyQuote', quoteToDisplay);
+            localStorage.setItem('quoteDate', today);
+        }
+        todayQuoteText.textContent = quoteToDisplay;
+        
+        
+        // V16: 每日扭蛋次数逻辑
+        const savedGachaDate = localStorage.getItem('gachaDate');
+        if (savedGachaDate === today) {
+            // 今天已经访问过了, 加载保存的次数
+            gachaCount = parseInt(localStorage.getItem('gachaCount') || 0);
+        } else {
+            // 新的一天, 重置次数
+            gachaCount = 0;
+            localStorage.setItem('gachaCount', 0);
+            localStorage.setItem('gachaDate', today);
+        }
+        // V16: 初始化扭蛋机计数
+        gachaCountText.textContent = `今日已扭 ${gachaCount}/3 次`;
+        
+        // 预热粒子
+        for (let i = 0; i < 15; i++) {
+            createParticle();
+        }
+        // 持续创建粒子
+        setInterval(createParticle, 500); 
+
+    };
+    
+    // 绑定心情按钮
+    moodButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const mood = button.dataset.mood;
+            const reply = getRandomItem(moodReplies[mood]);
+            moodReplyText.textContent = reply;
+        });
+    });
+    
+    // V12: 绑定扭蛋机按钮
+    gachaBtn.addEventListener('click', () => {
+        // V16: 获取今天的日期以保存
+        const today = new Date().toLocaleDateString();
+        
+        if (gachaCount >= 3) {
+            gachaText.textContent = "别点啦，再点我也爱你！";
+            gachaCountText.textContent = "今日已扭 3/3 次"; 
+        } else {
+            gachaCount++;
+            const reply = getRandomItem(gachaReplies);
+            gachaText.textContent = `“${reply}”`;
+            gachaCountText.textContent = `今日已扭 ${gachaCount}/3 次`;
+            
+            // V16: 将新次数保存到 localStorage
+            localStorage.setItem('gachaCount', gachaCount);
+            localStorage.setItem('gachaDate', today);
+        }
+    });
+
+    // V15: 绑定扭蛋机计数器点击事件 (彩蛋)
+    gachaCountText.addEventListener('click', resetGacha);
+
+    // 绑定三大功能按钮
+    navLove.addEventListener('click', () => {
+        showTextModal('💌', getRandomItem(quotes.btn1));
+    });
+    navEnc.addEventListener('click', () => {
+        showTextModal('✨', getRandomItem(quotes.btn2));
+    });
+    navPraise.addEventListener('click', () => {
+        showTextModal('🎉', getRandomItem(quotes.btn3));
+    });
+    
+    // 绑定文本弹窗关闭
+    textModalClose.addEventListener('click', hideTextModal);
+
+    // 绑定照片画廊按钮
+    memoryOpen.addEventListener('click', showGalleryModal);
+    galleryClose.addEventListener('click', hideGalleryModal);
+    galleryOverlay.addEventListener('click', hideGalleryModal);
+    galleryNext.addEventListener('click', showNextPhoto);
+    galleryPrev.addEventListener('click', showPrevPhoto);
+
+  </script>
 </body>
 </html>
