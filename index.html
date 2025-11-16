@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>给宝贝的App</title>
+    
+    <!-- 引入Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- 引入 Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* 自定义字体 */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .font-display {
+            font-family: 'Dancing Script', cursive;
+        }
+        
+        /* 动态渐变背景 */
+        body {
+            background: linear-gradient(-45deg, #fbc2eb, #a6c1ee, #fddb92, #fbc2eb);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+        }
+        
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        /* 模态框弹出动画 */
+        .modal {
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .modal-hidden {
+            opacity: 0;
+            transform: scale(0.9);
+            pointer-events: none;
+        }
+        .modal-visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+        
+        /* 按钮的果冻/Q弹效果 */
+        .jello-button {
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            box-shadow: 0 4px 15px 0 rgba(100, 100, 100, 0.2);
+        }
+        .jello-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px 0 rgba(100, 100, 100, 0.3);
+        }
+        .jello-button:active {
+            transform: scale(0.95);
+        }
+
+        /* 粒子动画 */
+        .particle {
+            position: absolute;
+            font-size: 1.5rem;
+            animation: particle-fall 5s linear; 
+            top: -10%;
+        }
+        
+        @keyframes particle-fall {
+            0% {
+                top: -10%;
+                opacity: 1;
+            }
+            100% {
+                top: 110%;
+                opacity: 0.5;
+            }
+        }
+        
+        /* 照片模态框样式 */
+        #photo-modal-content {
+            max-width: 90%;
+            max-height: 90vh; 
+            object-fit: contain; 
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+    </style>
+</head>
+<body class="overflow-hidden">
+    
+    <!-- 粒子容器 -->
+    <div id="particle-container" class="absolute inset-0 z-0 overflow-hidden" aria-hidden="true">
+        <!-- JS 会在这里动态添加粒子 -->
+    </div>
+
+    <!-- 主内容 -->
+    <div class="relative flex flex-col items-center justify-center min-h-screen p-6 z-10">
+        
+        <!-- 主卡片 -->
+        <div class="w-full max-w-md p-8 bg-white/80 backdrop-blur-md rounded-3xl shadow-2xl shadow-pink-200/50 text-center">
+            
+            <h1 class="font-display text-5xl font-bold text-pink-600">
+                给我的宝贝
+            </h1>
+            
+            <p class="mt-4 text-lg text-gray-700">
+                生活中的一些小美好...
+            </p>
+
+            <!-- 按钮网格 -->
+            <div class="grid grid-cols-2 gap-6 mt-10">
+                
+                <!-- 按钮 1 -->
+                <button id="btn-1" class="jello-button text-white py-4 px-6 rounded-2xl text-lg font-semibold bg-gradient-to-r from-pink-500 to-rose-500">
+                    💌 爱的便签
+                </button>
+                
+                <!-- 按钮 2 -->
+                <button id="btn-2" class="jello-button text-white py-4 px-6 rounded-2xl text-lg font-semibold bg-gradient-to-r from-purple-500 to-indigo-500">
+                    ✨ 需要鼓励时
+                </button>
+                
+                <!-- 按钮 3 -->
+                <button id="btn-3" class="jello-button text-white py-4 px-6 rounded-2xl text-lg font-semibold bg-gradient-to-r from-teal-400 to-cyan-500">
+                    🎉 每日一夸
+                </button>
+                
+                <!-- 按钮 4 -->
+                <button id="btn-4" class="jello-button text-white py-4 px-6 rounded-2xl text-lg font-semibold bg-gradient-to-r from-amber-500 to-orange-500">
+                    💖 我们的回忆
+                </button>
+                
+            </div>
+            
+            <p class="mt-8 text-xs text-gray-400">
+                Made with ❤️ by why
+            </p>
+        </div>
+        
+    </div>
+
+    <!-- 语录模态框 -->
+    <div id="text-modal" class="modal modal-hidden fixed inset-0 z-50 flex items-center justify-center p-6">
+        <!-- 遮罩 -->
+        <div id="text-modal-overlay" class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+        
+        <!-- 模态框内容 -->
+        <div class="relative w-full max-w-sm p-6 bg-white rounded-3xl shadow-xl text-center">
+            <!-- 关闭按钮 -->
+            <button id="text-modal-close" class="absolute top-3 right-3 text-gray-400 hover:text-gray-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+            <div id="text-modal-icon" class="text-6xl mb-4"></div>
+            <p id="text-modal-message" class="text-xl text-gray-800 font-semibold"></p>
+        </div>
+    </div>
+
+    <!-- 照片模态框 -->
+    <div id="photo-modal" class="modal modal-hidden fixed inset-0 z-50 flex items-center justify-center p-6">
+        <!-- 遮罩 -->
+        <div id="photo-modal-overlay" class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+        
+        <!-- 模态框内容 -->
+        <div class="relative flex justify-center items-center">
+            <img id="photo-modal-content" src="" alt="我们的回忆">
+            <!-- 关闭按钮 -->
+            <button id="photo-modal-close" class="absolute top-3 right-3 text-white bg-black/30 hover:bg-black/50 rounded-full p-2 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+    </div>
+
+
+    <script>
+        // --- 1. 获取元素 ---
+        const particleContainer = document.getElementById('particle-container');
+        
+        const textModal = document.getElementById('text-modal');
+        const textModalOverlay = document.getElementById('text-modal-overlay');
+        const textModalClose = document.getElementById('text-modal-close');
+        const textModalIcon = document.getElementById('text-modal-icon');
+        const textModalMessage = document.getElementById('text-modal-message');
+
+        const photoModal = document.getElementById('photo-modal');
+        const photoModalOverlay = document.getElementById('photo-modal-overlay');
+        const photoModalClose = document.getElementById('photo-modal-close');
+        const photoModalContent = document.getElementById('photo-modal-content');
+
+        const btn1 = document.getElementById('btn-1');
+        const btn2 = document.getElementById('btn-2');
+        const btn3 = document.getElementById('btn-3');
+        const btn4 = document.getElementById('btn-4');
+
+        // --- 2. 语录和照片数据 ---
+        // (!!) !!请在这里修改为您想说的话!! (!!)
+        const quotes = {
+            btn1: [
+                '这只是一个提醒：我每时每刻都在想你！',
+                '遇到你，是我这辈子最幸运的事。',
+                '你的笑容，是我一天的动力！',
+                '你就像阳光一样，照亮了我的世界。',
+                '有你在身边，再大的困难也不怕。',
+                '每一次呼吸，都为你心动。',
+                '你的出现，治愈了我所有的不开心。',
+                '想把世界上所有的温柔都给你。',
+                '和你在一起，每一天都是情人节。'
+            ],
+            btn2: [
+                '你已经超级棒了！累了就歇一歇，我永远是你最坚实的后盾。',
+                '别担心，天塌下来有我顶着！',
+                '相信自己，你比想象中更强大。',
+                '你做的每一个决定，我都支持。',
+                '累的时候，想想我，我是你的能量补给站。',
+                '没关系，慢慢来，我会一直陪着你。',
+                '你的努力，我都看在眼里，真的为你骄傲。',
+                '记得爱自己多一点，你值得世间所有的美好。',
+                '任何时候，我都会是第一个为你加油的人。'
+            ],
+            btn3: [
+                '今日份夸奖：你的眼睛里有星星！',
+                '怎么会有人连生气的样子都这么可爱！',
+                '你是我见过最有品味的人！',
+                '你的声音就像天籁，让我百听不厌。',
+                '你的发丝都透露着迷人的魅力。',
+                '穿什么都好看，简直是行走的画报。',
+                '你的善良和温柔，是这个世界最宝贵的财富。',
+                '聪明又可爱，怎么会有这么完美的人！',
+                '跟你在一起，我感觉自己也变得更好了。'
+            ]
+        };
+        
+        // (!!) !! V10 最终版 !! (!!)
+        // (!!) 我已根据您的 GitHub 仓库为您填好了正确的“直链” (!!)
+        // (!!) 您无需再修改此部分 (!!)
+        const photoLinks = [
+            'https://raw.githubusercontent.com/haiyangw101661-oss/why/main/unnamed.jpg',
+            'https://raw.githubusercontent.com/haiyangw101661-oss/why/main/2.jpg',
+            'https://raw.githubusercontent.com/haiyangw101661-oss/why/main/3.jpg',
+            'https://raw.githubusercontent.com/haiyangw101661-oss/why/main/4.jpg',
+            'https://raw.githubusercontent.com/haiyangw101661-oss/why/main/5.jpg',
+            'https://raw.githubusercontent.com/haiyangw101661-oss/why/main/6.jpg',
+            'https://raw.githubusercontent.com/haiyangw101661-oss/why/main/7.jpg',
+            'https://raw.githubusercontent.com/haiyangw101661-oss/why/main/8.jpg',
+            'https://raw.githubusercontent.com/haiyangw101661-oss/why/main/9.jpg',
+            'https://raw.githubusercontent.com/haiyangw101661-oss/why/main/10.jpg'
+        ];
+        
+        // V7: 粒子类型数组
+        const particleTypes = ['💖', '✨', '🌸', '🌟'];
+
+        // --- 3. 辅助函数 ---
+        
+        // 从数组中随机获取一项
+        function getRandomItem(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+        
+        // --- 4. 模态框函数 (语录) ---
+
+        // 显示语录模态框
+        function showTextModal(icon, message) {
+            textModalIcon.textContent = icon;
+            textModalMessage.textContent = message;
+            textModal.classList.remove('modal-hidden');
+            textModal.classList.add('modal-visible');
+        }
+
+        // 隐藏语录模态框
+        function hideTextModal() {
+            textModal.classList.add('modal-hidden');
+            textModal.classList.remove('modal-visible');
+        }
+
+        // --- 5. 模态框函数 (图片) ---
+        
+        function showPhotoModal() {
+            // V10: 检查 photoLinks 是否为空 (以防万一)
+            if (photoLinks.length === 0) {
+                showTextModal('💔', '照片链接配置似乎有问题！');
+                return;
+            }
+            const randomPhoto = getRandomItem(photoLinks);
+            photoModalContent.src = randomPhoto;
+            photoModal.classList.remove('modal-hidden');
+            photoModal.classList.add('modal-visible');
+        }
+        
+        function hidePhotoModal() {
+            photoModal.classList.add('modal-hidden');
+            photoModal.classList.remove('modal-visible');
+        }
+
+        // --- 6. 绑定事件 ---
+        
+        btn1.addEventListener('click', () => {
+            const quote = getRandomItem(quotes.btn1);
+            showTextModal('💌', quote);
+        });
+        
+        btn2.addEventListener('click', () => {
+            const quote = getRandomItem(quotes.btn2);
+            showTextModal('✨', quote);
+        });
+        
+        btn3.addEventListener('click', () => {
+            const quote = getRandomItem(quotes.btn3);
+            showTextModal('🎉', quote);
+        });
+        
+        btn4.addEventListener('click', showPhotoModal);
+        
+        // 关闭语录模态框
+        textModalClose.addEventListener('click', hideTextModal);
+        textModalOverlay.addEventListener('click', hideTextModal);
+
+        // 关闭照片模态框
+        photoModalClose.addEventListener('click', hidePhotoModal);
+        photoModalOverlay.addEventListener('click', hidePhotoModal);
+
+        // --- 7. 多彩粒子雨效果 ---
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+            particle.textContent = getRandomItem(particleTypes); 
+            particle.style.left = Math.random() * 100 + 'vw';
+            particle.style.animationDuration = (Math.random() * 2 + 3) + 's'; // 3-5秒
+            
+            particleContainer.appendChild(particle);
+            
+            // 动画结束后移除元素
+            particle.addEventListener('animationend', () => {
+                particle.remove();
+            });
+        }
+        
+        // 立即创建一些粒子, 避免启动时空白
+        for (let i = 0; i < 15; i++) {
+            createParticle();
+        }
+        // 保持持续创建
+        setInterval(createParticle, 300);
+
+    </script>
+</body>
+</html>
