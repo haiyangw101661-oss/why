@@ -81,14 +81,45 @@
             }
         }
         
-        /* 照片模态框样式 */
-        #photo-modal-content {
-            max-width: 90%;
+        /* V1G-ZH: 轮播按钮样式 */
+        .carousel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 60; /* 确保在内容之上 */
+            background-color: rgba(0, 0, 0, 0.3);
+            color: white;
+            border-radius: 9999px; /*
+            padding: 0.75rem; /* 12px */
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .carousel-btn:hover {
+            background-color: rgba(0, 0, 0, 0.6);
+            transform: translateY(-50%) scale(1.1);
+        }
+        
+        /* V1G-ZH: 照片内容样式 */
+        #gallery-content-container img {
+            max-width: 90vw;
             max-height: 90vh; 
             object-fit: contain; 
             border-radius: 1.5rem;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
+
+        /* V1G-ZH: 文本内容样式 */
+        .text-content-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 24rem; /* 384px, sm */
+            padding: 1.5rem; /* 24px, p-6 */
+            background-color: white;
+            border-radius: 1.5rem; /* rounded-3xl */
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); /* shadow-xl */
+            text-align: center;
+        }
+        
     </style>
 </head>
 <body class="overflow-hidden">
@@ -130,7 +161,7 @@
                     🎉 每日一夸
                 </button>
                 
-                <!-- 按钮 4 (V11: 自动加载) -->
+                <!-- 按钮 4 -->
                 <button id="btn-4" class="jello-button text-white py-4 px-6 rounded-2xl text-lg font-semibold bg-gradient-to-r from-amber-500 to-orange-500 opacity-50 cursor-not-allowed" disabled>
                     💖 正在加载回忆...
                 </button>
@@ -144,38 +175,35 @@
         
     </div>
 
-    <!-- 语录模态框 -->
-    <div id="text-modal" class="modal modal-hidden fixed inset-0 z-50 flex items-center justify-center p-6">
+    <!-- V1G-ZH: 统一的画廊模态框 -->
+    <div id="gallery-modal" class="modal modal-hidden fixed inset-0 z-50 flex items-center justify-center p-4">
         <!-- 遮罩 -->
-        <div id="text-modal-overlay" class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+        <div id="gallery-overlay" class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
         
-        <!-- 模态框内容 -->
-        <div class="relative w-full max-w-sm p-6 bg-white rounded-3xl shadow-xl text-center">
-            <!-- 关闭按钮 -->
-            <button id="text-modal-close" class="absolute top-3 right-3 text-gray-400 hover:text-gray-600 transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-            </button>
-            <div id="text-modal-icon" class="text-6xl mb-4"></div>
-            <p id="text-modal-message" class="text-xl text-gray-800 font-semibold"></p>
-        </div>
-    </div>
+        <!-- 关闭按钮 (右上角) -->
+        <button id="gallery-close" class="absolute top-4 right-4 z-50 text-white bg-black/30 hover:bg-black/50 rounded-full p-2 transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
+        
+        <!-- 上一个按钮 (左侧) -->
+        <button id="gallery-prev" class="carousel-btn left-4">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+        </button>
+        
+        <!-- 下一个按钮 (右侧) -->
+        <button id="gallery-next" class="carousel-btn right-4">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+        </button>
 
-    <!-- 照片模态框 -->
-    <div id="photo-modal" class="modal modal-hidden fixed inset-0 z-50 flex items-center justify-center p-6">
-        <!-- 遮罩 -->
-        <div id="photo-modal-overlay" class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
-        
-        <!-- 模态框内容 -->
-        <div class="relative flex justify-center items-center">
-            <img id="photo-modal-content" src="" alt="我们的回忆">
-            <!-- 关闭按钮 -->
-            <button id="photo-modal-close" class="absolute top-3 right-3 text-white bg-black/30 hover:bg-black/50 rounded-full p-2 transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-            </button>
+        <!-- 内容容器 (文字或图片) -->
+        <div id="gallery-content-container" class="relative flex justify-center items-center w-full h-full">
+            <!-- JS 将在此处注入内容 -->
         </div>
     </div>
 
@@ -184,21 +212,28 @@
         // --- 1. 获取元素 ---
         const particleContainer = document.getElementById('particle-container');
         
-        const textModal = document.getElementById('text-modal');
-        const textModalOverlay = document.getElementById('text-modal-overlay');
-        const textModalClose = document.getElementById('text-modal-close');
-        const textModalIcon = document.getElementById('text-modal-icon');
-        const textModalMessage = document.getElementById('text-modal-message');
+        // V1G-ZH: 移除旧的 modal 元素
+        // const textModal = ...
+        // const photoModal = ...
 
-        const photoModal = document.getElementById('photo-modal');
-        const photoModalOverlay = document.getElementById('photo-modal-overlay');
-        const photoModalClose = document.getElementById('photo-modal-close');
-        const photoModalContent = document.getElementById('photo-modal-content');
+        // V1G-ZH: 获取新的 gallery-modal 元素
+        const galleryModal = document.getElementById('gallery-modal');
+        const galleryOverlay = document.getElementById('gallery-overlay');
+        const galleryClose = document.getElementById('gallery-close');
+        const galleryPrev = document.getElementById('gallery-prev');
+        const galleryNext = document.getElementById('gallery-next');
+        const galleryContentContainer = document.getElementById('gallery-content-container');
 
         const btn1 = document.getElementById('btn-1');
         const btn2 = document.getElementById('btn-2');
         const btn3 = document.getElementById('btn-3');
         const btn4 = document.getElementById('btn-4');
+
+        // V1G-ZH: 轮播状态变量
+        let currentList = [];
+        let currentIndex = 0;
+        let currentListType = 'text'; // 'text' 或 'photo'
+        let currentIcon = '💌'; // 用于文本
 
         // (!!) !! V11 最终版 !! (!!)
         // (!!) 我已根据您的信息帮您填好了，您无需修改此部分 (!!)
@@ -252,75 +287,105 @@
 
         // --- 3. 辅助函数 ---
         
-        // 从数组中随机获取一项
+        // 从数组中随机获取一项 (V1G-ZH: 我们现在主要用它来洗牌)
         function getRandomItem(arr) {
             return arr[Math.floor(Math.random() * arr.length)];
         }
         
-        // --- 4. 模态框函数 (语录) ---
-
-        // 显示语录模态框
-        function showTextModal(icon, message) {
-            textModalIcon.textContent = icon;
-            textModalMessage.textContent = message;
-            textModal.classList.remove('modal-hidden');
-            textModal.classList.add('modal-visible');
-        }
-
-        // 隐藏语录模态框
-        function hideTextModal() {
-            textModal.classList.add('modal-hidden');
-            textModal.classList.remove('modal-visible');
-        }
-
-        // --- 5. 模态框函数 (图片) ---
-        
-        function showPhotoModal() {
-            if (photoLinks.length === 0) {
-                // 如果没有照片, 显示一条提示信息
-                showTextModal('💔', '照片还在路上，请稍后再试！');
-                return;
+        // V1G-ZH: Fisher-Yates 数组洗牌算法
+        function shuffleArray(array) {
+            let newArr = [...array]; // 创建副本
+            for (let i = newArr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
             }
-            const randomPhoto = getRandomItem(photoLinks);
-            photoModalContent.src = randomPhoto;
-            photoModal.classList.remove('modal-hidden');
-            photoModal.classList.add('modal-visible');
+            return newArr;
         }
         
-        function hidePhotoModal() {
-            photoModal.classList.add('modal-hidden');
-            photoModal.classList.remove('modal-visible');
+        // --- 4. V1G-ZH: 统一的画廊模态框函数 ---
+
+        // 根据索引显示当前项目
+        function displayCurrentItem() {
+            const item = currentList[currentIndex];
+            
+            // 清空旧内容
+            galleryContentContainer.innerHTML = ''; 
+
+            if (currentListType === 'text') {
+                // 是语录
+                galleryContentContainer.innerHTML = `
+                    <div class="text-content-wrapper">
+                        <div class="text-6xl mb-4">${currentIcon}</div>
+                        <p class="text-xl text-gray-800 font-semibold">${item}</p>
+                    </div>
+                `;
+            } else {
+                // 是照片
+                galleryContentContainer.innerHTML = `
+                    <img src="${item}" alt="我们的回忆" class="max-w-full max-h-[90vh] object-contain rounded-3xl shadow-xl">
+                `;
+            }
         }
 
-        // --- 6. V11: 从 GitHub 加载照片 ---
+        // 打开画廊
+        function showGalleryModal(list, type, icon = '') {
+            if (list.length === 0) return; // 安全检查
+
+            currentList = shuffleArray(list); // 每次打开都洗牌
+            currentIndex = 0; // 从第一个开始
+            currentListType = type;
+            if (type === 'text') {
+                currentIcon = icon;
+            }
+            
+            displayCurrentItem();
+            galleryModal.classList.remove('modal-hidden');
+            galleryModal.classList.add('modal-visible');
+        }
+
+        // 关闭画廊
+        function hideGalleryModal() {
+            galleryModal.classList.add('modal-hidden');
+            galleryModal.classList.remove('modal-visible');
+            galleryContentContainer.innerHTML = ''; // 关闭时清空内容
+        }
+        
+        // V1G-ZH: 导航函数
+        function showNextItem() {
+            currentIndex++;
+            if (currentIndex >= currentList.length) {
+                currentIndex = 0; // 循环到开头
+            }
+            displayCurrentItem();
+        }
+        
+        function showPrevItem() {
+            currentIndex--;
+            if (currentIndex < 0) {
+                currentIndex = currentList.length - 1; // 循环到末尾
+            }
+            displayCurrentItem();
+        }
+
+        // --- 5. V1G-ZH: 从 GitHub 加载照片 (与V11相同) ---
         async function fetchPhotosFromGitHub() {
-            // (V11: 移除了占位符检查, 因为我已经填好了)
             const apiUrl = `https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO_NAME}/contents/`;
             const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
 
             try {
-                // 添加一个随机查询参数来防止API缓存
                 const response = await fetch(apiUrl + '?t=' + new Date().getTime());
-                
-                if (!response.ok) {
-                    throw new Error(`GitHub API 错误: ${response.statusText}`);
-                }
+                if (!response.ok) throw new Error(`GitHub API 错误: ${response.statusText}`);
                 
                 const files = await response.json();
                 
                 if (Array.isArray(files)) {
                     files.forEach(file => {
-                        // 确保我们只获取根目录下的文件
                         if (file.type === 'file' && imageExtensions.some(ext => file.name.toLowerCase().endsWith(ext))) {
-                            // 使用 file.download_url, 这是最稳定的 "直链"
                             photoLinks.push(file.download_url);
                         }
                     });
                 }
-
-                if (photoLinks.length === 0) {
-                    throw new Error('在仓库中没有找到图片文件。');
-                }
+                if (photoLinks.length === 0) throw new Error('在仓库中没有找到图片文件。');
 
                 // 加载成功
                 btn4.disabled = false;
@@ -335,34 +400,36 @@
             }
         }
 
-        // --- 7. 绑定事件 ---
+        // --- 6. V1G-ZH: 绑定事件 (已更新) ---
         
         btn1.addEventListener('click', () => {
-            const quote = getRandomItem(quotes.btn1);
-            showTextModal('💌', quote);
+            showGalleryModal(quotes.btn1, 'text', '💌');
         });
         
         btn2.addEventListener('click', () => {
-            const quote = getRandomItem(quotes.btn2);
-            showTextModal('✨', quote);
+            showGalleryModal(quotes.btn2, 'text', '✨');
         });
         
         btn3.addEventListener('click', () => {
-            const quote = getRandomItem(quotes.btn3);
-            showTextModal('🎉', quote);
+            showGalleryModal(quotes.btn3, 'text', '🎉');
         });
         
-        btn4.addEventListener('click', showPhotoModal); 
+        btn4.addEventListener('click', () => {
+            if (photoLinks.length === 0) {
+                 // 如果照片加载失败, 也用画廊弹窗显示错误信息
+                 showGalleryModal(['照片还在路上，请稍后再试！'], 'text', '💔');
+                 return;
+            }
+            showGalleryModal(photoLinks, 'photo');
+        });
         
-        // 关闭语录模态框
-        textModalClose.addEventListener('click', hideTextModal);
-        textModalOverlay.addEventListener('click', hideTextModal);
+        // V1G-ZH: 绑定新画廊按钮的事件
+        galleryClose.addEventListener('click', hideGalleryModal);
+        galleryOverlay.addEventListener('click', hideGalleryModal);
+        galleryNext.addEventListener('click', showNextItem);
+        galleryPrev.addEventListener('click', showPrevItem);
 
-        // 关闭照片模态框
-        photoModalClose.addEventListener('click', hidePhotoModal);
-        photoModalOverlay.addEventListener('click', hidePhotoModal);
-
-        // --- 8. 多彩粒子雨效果 ---
+        // --- 7. 多彩粒子雨效果 (与V11相同) ---
         function createParticle() {
             const particle = document.createElement('div');
             particle.classList.add('particle');
@@ -378,7 +445,7 @@
             });
         }
         
-        // --- 9. V11: 页面加载时启动照片获取 & 粒子预热 ---
+        // --- 8. V1G-ZH: 页面加载时启动 (与V11相同) ---
         window.onload = () => {
             // 启动照片获取
             fetchPhotosFromGitHub();
